@@ -10,12 +10,11 @@ class App extends Component {
 
   render() {
     return [
-      <div>This is a simple app to rewrite.</div>,
-      <div>
+      <div key="navs">
         <Link to="/">首页</Link>
         <Link to="/detail">详情页</Link>
       </div>,
-      <Routes />,
+      <Routes key="routes" />,
     ];
   }
 }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import cnode from '../../../cnode.json';
 
 /* eslint-disable */
 export default class TestApi extends Component {
@@ -12,7 +13,7 @@ export default class TestApi extends Component {
 
   login() {
     axios.post('/api/user/login', {
-      accessToken: ''
+      accessToken: cnode.accessToken
     }).then(res => {
       console.log(res);
     })
