@@ -38,6 +38,9 @@ const getModuleFromString = (bundle, filename) => {
   return m;
 };
 
+/**
+ * 开发时检测文件变化，重新生成 server-entry.js
+ */
 const mfs = new MemoryFs(); // 基于内存的文件系统
 const serverCompiler = webpack(serverConfig);
 serverCompiler.outputFileSystem = mfs;
@@ -65,6 +68,9 @@ module.exports = function (app) {
   }));
 
   app.get('*', (req, res, next) => {
+    if (!serverBundle) {
+      return res.send('正在编译，稍后刷新！');
+    }
     getTemplate().then(template => {
       return serverRender(serverBundle, template, req, res);
     }).catch(next);

@@ -12,6 +12,7 @@ class App extends Component {
     return [
       <div key="navs">
         <Link to="/">首页</Link>
+        <br />
         <Link to="/detail">详情页</Link>
       </div>,
       <Routes key="routes" />,
