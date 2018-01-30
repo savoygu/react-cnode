@@ -27,6 +27,7 @@ const config = merge(baseConfig, {
 });
 
 if (isDev) {
+  config.devtool = '#cheap-module-eval-source-map';
   config.entry = [
     'react-hot-loader/patch',
     path.join(__dirname, '../client/app.js')
@@ -34,7 +35,7 @@ if (isDev) {
   config.devServer = {
     host: '0.0.0.0',
     port: 8888,
-    contentBase: path.join(__dirname, '../dist'),
+    // contentBase: path.join(__dirname, '../dist'),
     hot: true,
     overlay: {
       errors: true

@@ -2,23 +2,63 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
+
+import querystring from 'querystring';
+
 import Tabs, { Tab } from 'material-ui/Tabs';
+import List from 'material-ui/List';
+import { CircularProgress } from 'material-ui/Progress';
 
-import AppState from '../../store/app-state';
+import { AppState, TopicStore } from '../../store/store';
+import Container from '../layout/container';
+import TopicListItem from './list-item';
+import { tabs } from '../util/variable-define';
 
-@inject('appState') @observer
+@inject(stores => ({
+  appState: stores.appState,
+  topicStore: stores.topicStore,
+}))
+@observer
 export default class TopicList extends Component {
-  static propTypes = {
-    appState: PropTypes.instanceOf(AppState).isRequired,
+  static contextTypes = {
+    router: PropTypes.object,
   }
 
   constructor(props, context) {
     super(props, context);
     this.changeTab = this.changeTab.bind(this);
-    this.state = {
-      tabIndex: 0,
-    };
+    this.listItemClick = this.listItemClick.bind(this);
   }
+
+  componentDidMount() {
+    const tab = this.getTab();
+    this.props.topicStore.fetchTopics(tab);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.location.search !== this.props.location.search) {
+      this.props.topicStore.fetchTopics(this.getTab(nextProps.location.search));
+    }
+  }
+
+  getTab(search) {
+    search = search || this.props.location.search; // eslint-disable-line
+    const query = querystring.parse(search.substr(1));
+    return query.tab || 'all';
+  }
+
+  changeTab(e, value) {
+    this.context.router.history.push({
+      pathname: '/list',
+      search: `?tab=${value}`,
+    });
+  }
+
+  /* eslint-disable */
+  listItemClick(params) {
+
+  }
+  /* eslint-enable */
 
   asyncBootstrap() {
     return new Promise((resolve) => {
@@ -29,34 +69,53 @@ export default class TopicList extends Component {
     });
   }
 
-  changeName(event) {
-    this.props.appState.changeName(event.target.value);
-  }
-
-  changeTab(e, index) {
-    this.setState({
-      tabIndex: index,
-    });
-  }
-
   render() {
-    const { tabIndex } = this.state;
+    const { topicStore } = this.props;
+    const { topics, syncing } = topicStore;
+    const tabValue = this.getTab();
 
     return (
-      <div>
+      <Container>
         <Helmet>
           <title>This is topic list</title>
           <meta name="description" content="This is topic list description" />
         </Helmet>
-        <Tabs value={tabIndex} onChange={this.changeTab}>
-          <Tab label="全部" />
-          <Tab label="分享" />
-          <Tab label="工作" />
-          <Tab label="问答" />
-          <Tab label="精品" />
-          <Tab label="测试" />
+        <Tabs value={tabValue} onChange={this.changeTab}>
+          {
+            Object.keys(tabs).map(tab => <Tab key={tab} label={tabs[tab]} value={tab} />)
+          }
         </Tabs>
-      </div>
+        {
+          syncing ?
+            (
+              <div style={{ display: 'flex', justifyContent: 'center', padding: '40px 0' }}>
+                <CircularProgress size={100} />
+              </div>
+            ) :
+            (
+              <List>
+                {
+                  topics.map(topic => (
+                    <TopicListItem
+                      key={topic.id}
+                      onClick={this.listItemClick}
+                      topic={topic}
+                    />
+                  ))
+                }
+              </List>
+            )
+        }
+      </Container>
     );
   }
 }
+
+TopicList.wrappedComponent.propTypes = {
+  appState: PropTypes.instanceOf(AppState).isRequired,
+  topicStore: PropTypes.instanceOf(TopicStore).isRequired,
+};
+
+TopicList.propTypes = {
+  location: PropTypes.object.isRequired,
+};
