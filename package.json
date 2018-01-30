@@ -12,7 +12,8 @@
     "build": "rimraf dist && npm-run-parallel build:client build:server",
     "preview": "anywhere -d ./dist",
     "lint": "eslint --ext .js --ext .jsx client/",
-    "precommit": "npm run lint"
+    "precommit": "npm run lint",
+    "start": "cross-env NODE_ENV=production node server/server.js"
   },
   "repository": {
     "type": "git",
