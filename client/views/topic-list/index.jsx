@@ -41,8 +41,8 @@ export default class TopicList extends Component {
     }
   }
 
-  getTab(search) {
-    search = search || this.props.location.search; // eslint-disable-line
+  getTab(tabSearch) {
+    const search = tabSearch || this.props.location.search;
     const query = querystring.parse(search.substr(1));
     return query.tab || 'all';
   }
@@ -54,11 +54,9 @@ export default class TopicList extends Component {
     });
   }
 
-  /* eslint-disable */
-  listItemClick(params) {
-
+  listItemClick(topic) {
+    this.context.router.history.push(`/detail/${topic.id}`);
   }
-  /* eslint-enable */
 
   asyncBootstrap() {
     return new Promise((resolve) => {
@@ -98,7 +96,7 @@ export default class TopicList extends Component {
                   topics.map(topic => (
                     <TopicListItem
                       key={topic.id}
-                      onClick={this.listItemClick}
+                      onClick={() => this.listItemClick(topic)}
                       topic={topic}
                     />
                   ))
