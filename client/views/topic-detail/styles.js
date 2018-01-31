@@ -17,6 +17,9 @@ export const topicDetailStyle = theme => ({
         marginBottom: 7,
       },
     },
+    '& a': {
+      wordBreak: 'break-word',
+    },
   },
   replyHeader: {
     display: 'flex',
@@ -76,14 +79,23 @@ export const replyStyle = {
   root: {
     display: 'flex',
     alignItems: 'flex-start',
+    width: '100%',
     padding: 20,
     paddingBottom: 0,
     borderBottom: '1px solid #dfdfdf',
+    boxSizing: 'border-box',
+    '& a, & code': {
+      wordBreak: 'break-word',
+      whiteSpace: 'pre-wrap',
+    },
   },
   left: {
+    flex: '0 0 40px',
     marginRight: 20,
   },
   right: {
+    flex: 1,
+    width: 'calc(100% - 100px)',
     '& img': {
       display: 'block',
       maxWidth: '100%',

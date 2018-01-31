@@ -3,7 +3,7 @@ import { observer, inject } from 'mobx-react';
 import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 
-import querystring from 'querystring';
+import queryString from 'query-string';
 
 import Tabs, { Tab } from 'material-ui/Tabs';
 import List from 'material-ui/List';
@@ -43,7 +43,7 @@ export default class TopicList extends Component {
 
   getTab(tabSearch) {
     const search = tabSearch || this.props.location.search;
-    const query = querystring.parse(search.substr(1));
+    const query = queryString.parse(search);
     return query.tab || 'all';
   }
 
@@ -75,7 +75,7 @@ export default class TopicList extends Component {
     return (
       <Container>
         <Helmet>
-          <title>This is topic list</title>
+          <title>话题列表</title>
           <meta name="description" content="This is topic list description" />
         </Helmet>
         <Tabs value={tabValue} onChange={this.changeTab}>

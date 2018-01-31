@@ -53,12 +53,12 @@ export default class TopicStore {
             });
             resolve();
           } else {
-            reject();
+            reject(res.data);
           }
           this.syncing = false;
         })
         .catch((err) => {
-          reject(err);
+          reject(err.response.data);
           this.syncing = false;
         });
     });
@@ -76,7 +76,7 @@ export default class TopicStore {
               this.details.push(topic);
               resolve(topic);
             } else {
-              reject();
+              reject(res.data);
             }
           })
           .catch(reject);
