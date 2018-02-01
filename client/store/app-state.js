@@ -2,6 +2,7 @@ import { observable, action } from 'mobx';
 
 import { get, post } from '../views/util/http';
 
+let notifyId = 0;
 export default class AppState {
   @observable user = {
     isLogin: false,
@@ -16,11 +17,8 @@ export default class AppState {
       list: [],
     },
   }
-
-  // constructor({ user = { isLogin: false, info: {} } } = {}) {
-  //   this.user.isLogin = user.isLogin;
-  //   this.user.info = user.info;
-  // }
+  @observable activeNotifications = []
+  @observable notifications = []
 
   @action login(accessToken) {
     return new Promise((resolve, reject) => {
@@ -32,10 +30,21 @@ export default class AppState {
           this.user.isLogin = true;
           resolve();
         } else {
-          reject(res.data);
+          reject(res);
         }
       }).catch(reject);
     });
+  }
+
+  @action notify(config) {
+    config.id = notifyId;
+    notifyId += 1;
+    this.activeNotifications.push(config);
+  }
+
+  @action closeNotify(notify) {
+    this.activeNotifications.splice(this.activeNotifications.indexOf(notify), 1);
+    this.notifications.push(notify);
   }
 
   @action getUserDetail() {
@@ -48,7 +57,7 @@ export default class AppState {
             this.user.detail.recent_replies = res.data.recent_replies;
             resolve();
           } else {
-            reject(res.data);
+            reject(res);
           }
           this.user.detail.syncing = false;
         }).catch((err) => {
@@ -67,7 +76,7 @@ export default class AppState {
             this.user.collections.list = res.data;
             resolve();
           } else {
-            reject(res.data);
+            reject(res);
           }
           this.user.collections.syncing = false;
         }).catch((err) => {

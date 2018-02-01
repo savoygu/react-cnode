@@ -10,6 +10,7 @@ import IconButton from 'material-ui/IconButton';
 import Typography from 'material-ui/Typography';
 import HomeIcon from 'material-ui-icons/Home';
 
+import Notification from '../../components/notification';
 
 const styles = {
   root: {
@@ -40,11 +41,9 @@ class MainAppBar extends Component {
     this.context.router.history.push('/list?tab=all');
   }
 
-  /* eslint-disable */
   createButtonClick() {
-
+    this.context.router.history.push('/topic/create');
   }
-  /* eslint-enable */
 
   loginButtonClick() {
     if (this.props.appState.user.isLogin) {
@@ -56,7 +55,7 @@ class MainAppBar extends Component {
 
   render() {
     const { classes } = this.props;
-    const { user } = this.props.appState;
+    const { user, activeNotifications } = this.props.appState;
 
     return (
       <div className={classes.root}>
@@ -66,10 +65,19 @@ class MainAppBar extends Component {
               <HomeIcon />
             </IconButton>
             <Typography type="title" color="inherit" className={classes.flex}>JNode</Typography>
-            <Button raised color="primary" onClick={this.createButtonClick}>新建话题</Button>
+            {
+              user.isLogin ?
+                <Button raised color="primary" onClick={this.createButtonClick}>新建话题</Button> :
+                null
+            }
             <Button onClick={this.loginButtonClick}><span>{user.isLogin ? `${user.info.loginname}` : '登录'}</span></Button>
           </Toolbar>
         </AppBar>
+        {
+          activeNotifications && activeNotifications.length > 0 ?
+            activeNotifications.map(notify => <Notification key={notify.id} notify={notify} />) :
+            null
+        }
       </div>
     );
   }

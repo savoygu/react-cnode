@@ -2,8 +2,6 @@
   "restartable": "rs",
   "ignore": [
     ".git",
-    "build",
-    "client",
     "node_modules",
     ".vscode",
     ".babelrc",
