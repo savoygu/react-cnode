@@ -5,6 +5,7 @@ import {
   observer,
 } from 'mobx-react';
 import dateformat from 'dateformat';
+import axios from 'axios';
 
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
@@ -48,6 +49,13 @@ class UserInfo extends React.Component {
 
   goToTopic(id) {
     this.context.router.history.push(`/detail/${id}`);
+  }
+
+  asyncBootstrap() {
+    return axios.all([
+      this.props.appState.getUserDetail(),
+      this.props.appState.getUserCollection(),
+    ]).then(() => true).catch(() => false);
   }
 
   render() {

@@ -33,7 +33,8 @@ const createApp = TheApp => class Main extends React.Component {
   }
 };
 
-const appState = new AppState(initialState.appState);
+const appState = new AppState();
+appState.init(initialState.appState);
 const topicStore = new TopicStore(initialState.topicStore);
 
 const render = (Component) => {

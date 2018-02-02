@@ -1,6 +1,6 @@
 import {
   observable,
-  // toJS,
+  toJS,
   computed,
   action,
   extendObservable,
@@ -48,11 +48,15 @@ export default class TopicStore {
   @observable details
   @observable syncing
   @observable createdTopics = []
+  @observable tab
 
-  constructor({ syncing = false, topics = [], details = [] } = {}) {
+  constructor({
+    syncing = false, topics = [], tab = null, details = [],
+  } = {}) {
     this.syncing = syncing;
     this.topics = topics.map(topic => new Topic(createTopic(topic)));
     this.details = details.map(topic => new Topic(createTopic(topic)));
+    this.tab = tab;
   }
 
   addTopic(topic) {
@@ -68,22 +72,27 @@ export default class TopicStore {
 
   @action fetchTopics(tab) {
     return new Promise((resolve, reject) => {
-      this.syncing = true;
-      this.topics = [];
-      get('topics', { tab, mdrender: false })
-        .then((res) => {
-          if (res.success) {
-            this.topics = res.data.map(topic => new Topic(createTopic(topic)));
-            resolve();
-          } else {
-            reject(res);
-          }
-          this.syncing = false;
-        })
-        .catch((err) => {
-          reject(err.response.data);
-          this.syncing = false;
-        });
+      if (tab === this.tab && this.topics.length > 0) {
+        resolve();
+      } else {
+        this.tab = tab;
+        this.syncing = true;
+        this.topics = [];
+        get('topics', { tab, mdrender: false })
+          .then((res) => {
+            if (res.success) {
+              this.topics = res.data.map(topic => new Topic(createTopic(topic)));
+              resolve();
+            } else {
+              reject(res);
+            }
+            this.syncing = false;
+          })
+          .catch((err) => {
+            reject(err.response.data);
+            this.syncing = false;
+          });
+      }
     });
   }
 
@@ -129,5 +138,14 @@ export default class TopicStore {
         }
       }).catch(reject);
     });
+  }
+
+  toJson() {
+    return {
+      topics: toJS(this.topics),
+      syncing: toJS(this.syncing),
+      details: toJS(this.details),
+      tab: this.tab,
+    };
   }
 }

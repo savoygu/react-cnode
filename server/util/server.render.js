@@ -15,25 +15,31 @@ const getStoreState = (stores) => {
 };
 
 module.exports = (bundle, template, req, res) => {
+  const user = req.session.user;
+  const createStoreMap = bundle.createStoreMap;
+  const createApp = bundle.default;
+
+  const routerContext = {};
+  const stores = createStoreMap();
+
+  if (user) {
+    stores.appState.user.isLogin = true;
+    stores.appState.user.info = user;
+  }
+
+  const sheetsRegistry = new SheetsRegistry();
+  const theme = createMuiTheme({
+    palette: {
+      primary: lightBlue,
+      accent: pink,
+      type: 'light'
+    }
+  });
+  const generateClassName = createGenerateClassName();
+
+  const app = createApp(stores, routerContext, sheetsRegistry, generateClassName, theme, req.url);
+
   return new Promise((resolve, reject) => {
-    const createStoreMap = bundle.createStoreMap;
-    const createApp = bundle.default;
-
-    const routerContext = {};
-    const stores = createStoreMap();
-
-    const sheetsRegistry = new SheetsRegistry();
-    const theme = createMuiTheme({
-      palette: {
-        primary: lightBlue,
-        accent: pink,
-        type: 'light'
-      }
-    });
-    const generateClassName = createGenerateClassName();
-
-    const app = createApp(stores, routerContext, sheetsRegistry, generateClassName, theme, req.url);
-
     asyncBootstrap(app).then(() => { // 处理初始化异步操作
       if (routerContext.url) { // 处理 Redirect 情况
         res.status(302).setHeader('Location', routerContext.url);

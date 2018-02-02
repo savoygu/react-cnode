@@ -1,4 +1,4 @@
-import { observable, action } from 'mobx';
+import { observable, action, toJS } from 'mobx';
 
 import { get, post } from '../views/util/http';
 
@@ -19,6 +19,12 @@ export default class AppState {
   }
   @observable activeNotifications = []
   @observable notifications = []
+
+  init({ user }) {
+    if (user) {
+      this.user = user;
+    }
+  }
 
   @action login(accessToken) {
     return new Promise((resolve, reject) => {
@@ -84,5 +90,11 @@ export default class AppState {
           reject(err.response.data);
         });
     });
+  }
+
+  toJson() {
+    return {
+      user: toJS(this.user),
+    };
   }
 }

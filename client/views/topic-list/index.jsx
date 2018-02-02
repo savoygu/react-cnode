@@ -59,12 +59,8 @@ export default class TopicList extends Component {
   }
 
   asyncBootstrap() {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        this.props.appState.count = 3;
-        resolve(true);
-      }, 2000);
-    });
+    const tab = this.getTab();
+    return this.props.topicStore.fetchTopics(tab || 'all').then(() => true).catch(() => false);
   }
 
   render() {
@@ -84,27 +80,26 @@ export default class TopicList extends Component {
             Object.keys(tabs).map(tab => <Tab key={tab} label={tabs[tab]} value={tab} />)
           }
         </Tabs>
-        <div>
-          {
-            createdTopics && createdTopics.length > 0 &&
+        {
+          createdTopics && createdTopics.length > 0 ?
             <List style={{ backgroundColor: '#dfdfdf' }}>
               {
-                createdTopics.map((topic) => {
-                  topic = Object.assign({}, topic, {
-                    author: user.info,
-                  });
-                  return (
-                    <TopicListItem
-                      key={topic.id}
-                      onClick={() => this.listItemClick(topic)}
-                      topic={topic}
-                    />
-                  );
-                })
-              }
-            </List>
-          }
-        </div>
+              createdTopics.map((topic) => {
+                topic = Object.assign({}, topic, {
+                  author: user.info,
+                });
+                return (
+                  <TopicListItem
+                    key={topic.id}
+                    onClick={() => this.listItemClick(topic)}
+                    topic={topic}
+                  />
+                );
+              })
+            }
+            </List> :
+            null
+        }
         {
           syncing ?
             (
