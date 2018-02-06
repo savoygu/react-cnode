@@ -1,7 +1,7 @@
 import React from 'react';
 import { StaticRouter } from 'react-router-dom';
 import { Provider, useStaticRendering } from 'mobx-react';
-import { JssProvider } from 'react-jss';
+import JssProvider from 'react-jss/lib/JssProvider';
 import { MuiThemeProvider } from 'material-ui/styles';
 
 import App from './views/App';

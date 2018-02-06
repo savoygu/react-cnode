@@ -2,6 +2,7 @@ const path = require('path');
 
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const NameAllModulesPlugin = require('name-all-modules-plugin');
 const merge = require('webpack-merge');
 
 const baseConfig = require('./webpack.base');
@@ -49,6 +50,53 @@ if (isDev) {
     }
   };
   config.plugins.push(new webpack.HotModuleReplacementPlugin());
+} else {
+  config.entry = {
+    app: path.join(__dirname, '../client/app.js'),
+    reactrc: [
+      'react',
+      'react-dom',
+      'react-router-dom',
+      'prop-types',
+      'mobx',
+      'mobx-react',
+      'react-helmet'
+    ],
+    editor: [
+      'react-simplemde-editor'
+    ],
+    vendor: [
+      'axios',
+      'query-string',
+      'dateformat',
+      'marked',
+      'classnames'
+    ]
+  };
+  config.output.filename = '[name].[chunkhash].js';
+  config.plugins.push(
+    new webpack.optimize.UglifyJsPlugin(),
+    new webpack.optimize.CommonsChunkPlugin({
+      names: ['reactrc', 'vendor', 'editor']
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'manifest',
+      minChunks: Infinity
+    }),
+    new webpack.NamedModulesPlugin(), // 异步加载
+    new NameAllModulesPlugin(),
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify('production')
+      }
+    }),
+    new webpack.NamedChunksPlugin((chunk) => {
+      if (chunk.name) {
+        return chunk.name;
+      }
+      return chunk.mapModules(m => path.join(m.context, m.request)).join('_');
+    })
+  );
 }
 
 module.exports = config;

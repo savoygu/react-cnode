@@ -20,7 +20,7 @@ export default class AppState {
   @observable activeNotifications = []
   @observable notifications = []
 
-  init({ user }) {
+  init({ user } = {}) {
     if (user) {
       this.user = user;
     }
