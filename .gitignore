@@ -65,3 +65,5 @@ typings/
 
 # Cnode accesstoken
 
+# qiniu access key
+app.config.js

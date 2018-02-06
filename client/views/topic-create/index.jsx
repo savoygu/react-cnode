@@ -4,7 +4,6 @@ import {
   inject,
   observer,
 } from 'mobx-react';
-import SimpleMDE from 'react-simplemde-editor';
 
 import TextField from 'material-ui/TextField';
 import Radio from 'material-ui/Radio';
@@ -16,6 +15,7 @@ import Container from '../layout/container';
 import createStyles from './styles';
 import { tabs } from '../util/variable-define';
 
+import SimpleMDE from '../../components/simple-mde';
 
 @inject(stores => ({
   topicStore: stores.topicStore,

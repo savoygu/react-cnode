@@ -6,6 +6,7 @@ const NameAllModulesPlugin = require('name-all-modules-plugin');
 const merge = require('webpack-merge');
 
 const baseConfig = require('./webpack.base');
+const { cdn: { host } } = require('../app.config');
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -53,19 +54,14 @@ if (isDev) {
 } else {
   config.entry = {
     app: path.join(__dirname, '../client/app.js'),
-    reactrc: [
+    vendor: [
       'react',
       'react-dom',
       'react-router-dom',
       'prop-types',
       'mobx',
       'mobx-react',
-      'react-helmet'
-    ],
-    editor: [
-      'react-simplemde-editor'
-    ],
-    vendor: [
+      'react-helmet',
       'axios',
       'query-string',
       'dateformat',
@@ -74,10 +70,11 @@ if (isDev) {
     ]
   };
   config.output.filename = '[name].[chunkhash].js';
+  config.output.publicPath = host;
   config.plugins.push(
     new webpack.optimize.UglifyJsPlugin(),
     new webpack.optimize.CommonsChunkPlugin({
-      names: ['reactrc', 'vendor', 'editor']
+      name: 'vendor'
     }),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'manifest',

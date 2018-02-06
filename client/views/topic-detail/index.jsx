@@ -4,7 +4,6 @@ import { observer, inject } from 'mobx-react';
 import Helmet from 'react-helmet';
 import marked from 'marked';
 import dateformat from 'dateformat';
-import SimpleMDE from 'react-simplemde-editor';
 
 import { withStyles } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
@@ -16,6 +15,8 @@ import { TopicStore } from '../../store/store';
 import Container from '../layout/container';
 import { topicDetailStyle } from './styles';
 import Reply from './reply';
+
+import SimpleMDE from '../../components/simple-mde';
 
 @inject(stores => ({
   topicStore: stores.topicStore,
@@ -151,7 +152,7 @@ class TopicDetail extends Component {
                 </Button>
               </section> :
               <section className={classes.notLoginButton}>
-                <Button raised color="secondary" onClick={this.goToLogin}>登录并回复</Button>
+                <Button raised="true" color="secondary" onClick={this.goToLogin}>登录并回复</Button>
               </section>
           }
           <section>
